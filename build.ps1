@@ -29,4 +29,4 @@ function BuildVariants {
 Set-Location $PSScriptRoot
 
 # Release
-BuildVariants -ldflags "$LDFLAGS -s" -prefix ldapnomnom -path . -arch @("386", "amd64", "arm64") -os @("windows")
+BuildVariants -ldflags "$LDFLAGS -s" -prefix hashmuncher -path . -arch @("386", "amd64", "arm64") -os @("windows")
