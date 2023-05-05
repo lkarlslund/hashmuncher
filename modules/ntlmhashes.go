@@ -65,20 +65,29 @@ func (m *NTLMHash) ProcessEvent(e *etw.Event) {
 			var message NTLMMessage3
 			err := binstruct.UnmarshalLE(rawmessage, &message)
 			if err == nil && m.lastServerChallenge != nil {
-				// if message.NTLMHash.Length == 24 {
-				// 	fmt.Printf("%s::%s:%X:%X\n",
-				// 		message.UserName.UTF16String(),
-				// 		message.WorkStationName.UTF16String(),
-				// 		m.lastServerChallenge,
-				// 		message.NTLMHash.Data)
-				// } else {
-				fmt.Printf("%s::%s:%X:%X:%X\n",
-					message.UserName.UTF16String(),
-					message.TargetName.UTF16String(),
-					m.lastServerChallenge,
-					message.NTLMHash.Data[:16],
-					message.NTLMHash.Data[16:])
-				// }
+				if message.NTLMHash.Length == 24 {
+					fmt.Printf("%s::%s:%X:%X\n",
+						message.UserName.UTF16String(),
+						message.WorkStationName.UTF16String(),
+						m.lastServerChallenge,
+						message.NTLMHash.Data)
+				} else if message.NTLMHash.Length > 24 {
+					fmt.Printf("%s::%s:%X:%X:%X\n",
+						message.UserName.UTF16String(),
+						message.TargetName.UTF16String(),
+						m.lastServerChallenge,
+						message.NTLMHash.Data[:16],
+						message.NTLMHash.Data[16:])
+				} else {
+					fmt.Printf("Short NTLM hash encountered: %s:%s:%s:%X:%X:%X\n",
+						message.UserName.UTF16String(),
+						message.WorkStationName.UTF16String(),
+						message.TargetName.UTF16String(),
+						m.lastServerChallenge,
+						message.NTLMHash.Data,
+						message.LMHash.Data,
+					)
+				}
 				m.lastServerChallenge = nil
 			} else {
 				fmt.Println(err)
