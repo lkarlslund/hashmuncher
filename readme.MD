@@ -10,16 +10,24 @@
 - Press Ctrl-C to stop processing
 - Crack hashes with HashCat using -m 5600
 
-### Download auto built binaries from [releases](https://github.com/lkarlslund/hashmuncher/releases) or build and install with this Go command
+### Download auto built binaries from [releases](https://github.com/lkarlslund/hashmuncher/releases) or build and install on Windows with this Go command
 
-```go
+```bash
 go install github.com/lkarlslund/hashmuncher@latest
+```
+
+### Cross compile the Windows binaries on any Golang supported platforms with PowerShell installed
+
+```powershell
+git clone https://github.com/lkarlslund/hashmuncher
+cd hashmuncher
+./build.ps1
 ```
 
 ### Usage
 
 ```bash
-hashmuncher
+hashmuncher.exe
 ```
 
 Now wait for someone to authenticate against your machine. There are various techniques for this but SCF and LNK files with icons pointing to your machine is a popular way. Press Ctrl-C when you're done, copy output to a text file and run HashCat.
