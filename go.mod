@@ -1,6 +1,6 @@
 module github.com/lkarlslund/hashmuncher
 
-go 1.20
+go 1.17
 
 require github.com/0xrawsec/golang-etw v1.6.2
 
