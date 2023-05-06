@@ -4,24 +4,29 @@
 
 [![GitHub all releases](https://img.shields.io/github/downloads/lkarlslund/hashmuncher/total)](https://github.com/lkarlslund/hashmuncher/releases) ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/lkarlslund/hashmuncher/prerelease.yml?branch=main)
 
+- Requires elevated (administrator) access on Windows 8.1 / Windows 2016 or later
 - Uses Event Tracing for Windows (ETW) to get access to raw packet data for SMB authentication packets
 - Decodes NTLM message types 2 and 3
-- Outputs to stdout
-- Press Ctrl-C to stop processing
+- Outputs to stdout or to a file
+- Press Ctrl-C to stop processing or use timeout option
 - Crack hashes with HashCat using -m 5600
 
 ## Getting Hash Muncher
 
-### Download auto built binaries from [releases](https://github.com/lkarlslund/hashmuncher/releases)
+Three different options for getting this up and running
 
-### Build and install on Windows with this Go command
+### A) Download auto built binaries from [releases](https://github.com/lkarlslund/hashmuncher/releases)
+
+### B) Build and install on Windows with this Go command
+- requires Golang
 
 ```bash
 go install github.com/lkarlslund/hashmuncher@latest
 ```
 
-### Cross compile the Windows binaries on any Golang supported platforms with PowerShell installed
-
+### C) Cross compile the Windows binaries on any Golang supported platforms with PowerShell installed
+- requires Golang and PowerShell
+  
 ```powershell
 git clone https://github.com/lkarlslund/hashmuncher
 cd hashmuncher
@@ -38,11 +43,12 @@ Now wait for someone to authenticate against your machine. There are various tec
 
 ## Detection
 
-- No idea, please leave feedback
+- None so far
 
 ## Mitigation
 
 - None for the ETW part, this is part of the Windows design says Microsoft
+- Use STRONG passwords! Cracking NetNTLMv2 is not fast at all, but with weak passwords it can surely be done.
 - Disable NTLM entirely! It probably won't be painless - but see [Farewell NTLM - It is time to disable NTLM](https://www.scip.ch/en/?labs.20210909)
 
 ## History
