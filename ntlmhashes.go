@@ -1,10 +1,11 @@
-package modules
+package main
 
 import (
 	"bytes"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"unicode/utf16"
 
 	"github.com/0xrawsec/golang-etw/etw"
@@ -13,14 +14,42 @@ import (
 
 type NTLMHash struct {
 	lastServerChallenge []byte
+	resultchan          chan<- ModuleResult
 }
 
-func (m *NTLMHash) Init() (etw.Provider, error) {
+type NTLMResult struct {
+	User, WorkStation, Target string
+	Challenge                 []byte
+	Hash                      []byte
+	MoreHash                  []byte
+}
+
+func (nr NTLMResult) String() string {
+	if len(nr.MoreHash) == 0 {
+		return fmt.Sprintf("%s::%s:%X:%X\n",
+			nr.User,
+			nr.WorkStation,
+			nr.Challenge,
+			nr.Hash)
+	}
+	return fmt.Sprintf("%s::%s:%X:%X:%X\n",
+		nr.User,
+		nr.Target,
+		nr.Challenge,
+		nr.Hash,
+		nr.MoreHash,
+	)
+}
+
+func (m *NTLMHash) Init(resultchan chan<- ModuleResult) (etw.Provider, error) {
+	m.resultchan = resultchan
+
 	provider, err := etw.ParseProvider("Microsoft-Windows-SMBServer")
 	if err != nil {
 		return provider, err
 	}
 	provider.Filter = []uint16{40000}
+
 	return provider, nil
 }
 
@@ -66,20 +95,23 @@ func (m *NTLMHash) ProcessEvent(e *etw.Event) {
 			err := binstruct.UnmarshalLE(rawmessage, &message)
 			if err == nil && m.lastServerChallenge != nil {
 				if message.NTLMHash.Length == 24 {
-					fmt.Printf("%s::%s:%X:%X\n",
-						message.UserName.UTF16String(),
-						message.WorkStationName.UTF16String(),
-						m.lastServerChallenge,
-						message.NTLMHash.Data)
+					m.resultchan <- NTLMResult{
+						User:        message.UserName.UTF16String(),
+						WorkStation: message.WorkStationName.UTF16String(),
+						Challenge:   m.lastServerChallenge,
+						Hash:        message.NTLMHash.Data,
+					}
 				} else if message.NTLMHash.Length > 24 {
-					fmt.Printf("%s::%s:%X:%X:%X\n",
-						message.UserName.UTF16String(),
-						message.TargetName.UTF16String(),
-						m.lastServerChallenge,
-						message.NTLMHash.Data[:16],
-						message.NTLMHash.Data[16:])
+					m.resultchan <- NTLMResult{
+						User:        message.UserName.UTF16String(),
+						WorkStation: message.WorkStationName.UTF16String(),
+						Target:      message.TargetName.UTF16String(),
+						Challenge:   m.lastServerChallenge,
+						Hash:        message.NTLMHash.Data[:16],
+						MoreHash:    message.NTLMHash.Data[16:],
+					}
 				} else {
-					fmt.Printf("Short NTLM hash encountered: %s:%s:%s:%X:%X:%X\n",
+					log.Printf("Short NTLM hash encountered: %s:%s:%s:%X:%X:%X\n",
 						message.UserName.UTF16String(),
 						message.WorkStationName.UTF16String(),
 						message.TargetName.UTF16String(),
@@ -90,7 +122,7 @@ func (m *NTLMHash) ProcessEvent(e *etw.Event) {
 				}
 				m.lastServerChallenge = nil
 			} else {
-				fmt.Println(err)
+				log.Println(err)
 			}
 		}
 
