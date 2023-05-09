@@ -58,7 +58,7 @@ IconIndex=1
 
 Replace the IP address with your Hach Muncher machine, and save the file to a (company wide) fileshare as 'whatever.url', and watch the hashes come pouring in.
 
-There are other methods mentioned at [Red Team Notes - Forced Authentication](https://www.ired.team/offensive-security/initial-access/t1187-forced-authentication>), and you can probably also get success by mailing everyone a Word document, but it's not stealthy at all.
+There are other methods mentioned at [Red Team Notes - Forced Authentication](https://www.ired.team/offensive-security/initial-access/t1187-forced-authentication), and you can probably also get success by mailing everyone a Word document, but it's not stealthy at all.
 
 ## Detection
 
