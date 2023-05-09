@@ -37,7 +37,7 @@ cd hashmuncher
 
 1) Ensure that Windows Firewall allows "File and Printer Sharing" as Hash Muncher requires the built in SMB service to send recieve the initial request and send response packets to the target.
 
-![](images\2023-05-09-12-02-27.png)
+<img src="images\2023-05-09-12-02-27.png" width="40%">
 
 2) In an elevated prompt run Hash Muncher
 
